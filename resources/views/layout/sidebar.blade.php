@@ -12,11 +12,11 @@
         </div>
       </div>
       <!-- search form -->
-      
+
       <!-- /.search form -->
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu" data-widget="tree">
-        
+
         <li>
           <a href="{{route('dashboard')}}">
             <i class="fa fa-dashboard"></i> <span>Dashboard</span>
@@ -34,7 +34,7 @@
           </a>
         </li>
         <li>
-          <a href="#">
+          <a href="{{route('members.index')}}">
             <i class="fa fa-id-card"></i> <span>Members</span>
           </a>
         </li>

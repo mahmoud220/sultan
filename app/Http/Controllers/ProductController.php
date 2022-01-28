@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Category;
+use PDF;
 
 class ProductController extends Controller
 {
@@ -16,15 +17,36 @@ class ProductController extends Controller
     public function index()
     {
         $category = Category::all()->pluck('category_name', 'id_category');
-        
+
         return view('products.index', compact('category'));
     }
 
-    public function data(){
-        $product = Product::orderBy('id_product', 'desc')->get();
+    public function data()
+    {
+        $product = Product::leftJoin('categories', 'categories.id_category', 'products.id_category')
+            ->select('products.*', 'category_name')
+            ->orderBy('id_product', 'asc')
+            ->get();
         return datatables()
             ->of($product)
             ->addIndexColumn()
+            ->addColumn('select_all', function ($product) {
+                return '
+                    <input type="checkbox" name="id_product[]" value="'. $product->id_product .'">
+                ';
+            })
+            ->addColumn('code_product', function ($product) {
+                return '<span class="label label-success">'. $product->code_product .'</span>';
+            })
+            ->addColumn('purchas_price', function ($product) {
+                return format_uang($product->purchas_price);
+            })
+            ->addColumn('sell_price', function ($product) {
+                return format_uang($product->sell_price);
+            })
+            ->addColumn('stock', function ($product) {
+                return format_uang($product->stok);
+            })
             ->addColumn('Added', function ($product) {
                 return '
                 <div class="btn-group">
@@ -33,47 +55,10 @@ class ProductController extends Controller
                 </div>
                 ';
             })
-            ->rawColumns(['Added'])
+            ->rawColumns(['Added', 'code_product', 'select_all'])
             ->make(true);
     }
 
-    // public function data()
-    // {
-    //     $product = Product::leftJoin('categories', 'categories.id_category', 'products.id_category')
-    //         ->select('produk.*', 'category_name')
-    //         ->get();
-
-    //     return datatables()
-    //         ->of($product)
-    //         ->addIndexColumn()
-    //         ->addColumn('select_all', function ($produk) {
-    //             return '
-    //                 <input type="checkbox" name="id_produk[]" value="'. $produk->id_produk .'">
-    //             ';
-    //         })
-    //         ->addColumn('kode_produk', function ($produk) {
-    //             return '<span class="label label-success">'. $produk->kode_produk .'</span>';
-    //         })
-    //         ->addColumn('harga_beli', function ($produk) {
-    //             return format_uang($produk->harga_beli);
-    //         })
-    //         ->addColumn('harga_jual', function ($produk) {
-    //             return format_uang($produk->harga_jual);
-    //         })
-    //         ->addColumn('stok', function ($produk) {
-    //             return format_uang($produk->stok);
-    //         })
-    //         ->addColumn('aksi', function ($produk) {
-    //             return '
-    //             <div class="btn-group">
-    //                 <button type="button" onclick="editForm(`'. route('produk.update', $produk->id_produk) .'`)" class="btn btn-xs btn-info btn-flat"><i class="fa fa-pencil"></i></button>
-    //                 <button type="button" onclick="deleteData(`'. route('produk.destroy', $produk->id_produk) .'`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
-    //             </div>
-    //             ';
-    //         })
-    //         ->rawColumns(['aksi', 'kode_produk', 'select_all'])
-    //         ->make(true);
-    // }
 
     /**
      * Show the form for creating a new resource.
@@ -93,10 +78,11 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $product = Product::latest()->first();
-        $request['code_product'] = 'P-'. add_zero_front($product->id_product, 6);
-        
+        $product = Product::latest()->first() ?? new Product();
+        $request['code_product'] = 'P'. add_zero_front((int)$product->id_product +1, 6);
+
         $product = Product::create($request->all());
+
         return response()->json('Data Added Succfully', 200);
     }
 
@@ -108,7 +94,9 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        //
+        $product = Product::find($id);
+
+        return response()->json($product);
     }
 
     /**
@@ -131,7 +119,10 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $product = Product::find($id);
+        $product->update($request->all());
+
+        return response()->json('Data Updated Succfully', 200);
     }
 
     /**
@@ -142,6 +133,33 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $product = Product::find($id);
+        $product->delete();
+
+        return response(null, 204);
+    }
+
+    public function deleteSelected(Request $request)
+    {
+        foreach ($request->id_product as $id) {
+            $product = Product::find($id);
+            $product->delete();
+        }
+
+        return response(null, 204);
+    }
+
+    public function printBarcode(Request $request)
+    {
+        $dataproduct = array();
+        foreach ($request->id_product as $id) {
+            $product = Product::find($id);
+            $dataproduct[] = $product;
+        }
+
+        $no  = 1;
+        $pdf = PDF::loadView('products.barcode', compact('dataproduct', 'no'));
+        $pdf->setPaper('a4', 'potrait');
+        return $pdf->stream('product.pdf');
     }
 }
