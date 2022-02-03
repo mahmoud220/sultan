@@ -39,13 +39,13 @@
           </a>
         </li>
         <li>
-          <a href="#">
+          <a href="{{route('suppliers.index')}}">
             <i class="fa fa-truck"></i> <span>Suppliers</span>
           </a>
         </li>
         <li class="header">Transactions</li>
         <li>
-          <a href="#">
+          <a href="{{route('expenses.index')}}">
             <i class="fa fa-money"></i> <span>Expenses</span>
           </a>
         </li>

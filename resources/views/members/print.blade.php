@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Print Member Card</title>
+    <title>Cetak Kartu Member</title>
 
     <style>
         .box {
@@ -33,7 +33,7 @@
             height: 40px;
             right: 16pt;
         }
-        .name {
+        .nama {
             position: absolute;
             top: 100pt;
             right: 16pt;
@@ -42,7 +42,7 @@
             font-weight: bold;
             color: #fff !important;
         }
-        .phone {
+        .telepon {
             position: absolute;
             margin-top: 120pt;
             right: 16pt;
@@ -75,29 +75,20 @@
                 @foreach ($data as $item)
                     <td class="text-center" width="50%">
                         <div class="box">
-{{--                            <img src="{{ public_path($setting->path_card_member) }}" alt="card" width="50%">--}}
-{{--                            <div class="logo">--}}
-{{--                                <p>{{ $setting->company_name }}</p>--}}
-{{--                                <img src="{{ public_path($setting->logo) }}" alt="logo">--}}
-{{--                            </div>--}}
-                            <img src="{{ asset('public/img/member.png') }}" alt="card">
+                            <img src="{{ asset('/public/img/member.png') }}" alt="card" width="50%">
                             <div class="logo">
                                 <p>{{ config('app.name') }}</p>
-                                <img src="{{ asset('public/img/logo.png') }}" alt="logo">
+                                <img src="{{ asset('/public/img/logo.png') }}" alt="logo">
                             </div>
-                            <div class="name">{{ $item->name }}</div>
-                            <div class="phone">{{ $item->phone }}</div>
+                            <div class="nama">{{ $item->name }}</div>
+                            <div class="telepon">{{ $item->phone }}</div>
                             <div class="barcode text-left">
-                                <img src="data:image/png;base64, {{ DNS2D::getBarcodePNG("$item->code_member", 'QRCODE') }}" alt="qrcode"
+                                <img src="data:image/png;base64, {{ DNS2D::getBarcodePNG("$item->code_member", 'QRCODE')  }}" alt="qrcode"
                                      height="45"
                                      widht="45">
                             </div>
                         </div>
                     </td>
-
-                    @if (count($datamember) == 1)
-                        <td class="text-center" style="width: 50%;"></td>
-                    @endif
                 @endforeach
             </tr>
         @endforeach

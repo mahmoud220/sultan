@@ -136,7 +136,7 @@ class MemberController extends Controller
             $member = Member::find($id);
             $datamember[] = $member;
         }
-
+      //  dd($datamember);
         $datamember = $datamember->chunk(2);
 //        $setting    = Setting::first();
 
