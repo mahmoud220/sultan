@@ -30,7 +30,7 @@ function sum ($number) {
     return $sum;
 }
 
-function palestinian_date($date, $show_date = true)
+function palestinian_date($tgl, $show_date = true)
 {
     $date_name  = array(
         'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
@@ -39,9 +39,9 @@ function palestinian_date($date, $show_date = true)
         'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
     );
 
-    $year   = substr($date, 0, 4);
+    $year   = substr($tgl, 0, 4);
     $month   = $month_name[(int) substr($tgl, 5, 2)];
-    $datee = substr($date, 8, 2);
+    $date = substr($tgl, 8, 2);
     $text    = '';
 
     if ($show_date) {
@@ -49,10 +49,10 @@ function palestinian_date($date, $show_date = true)
         $day        = $date_name[$today_format];
         $text       .= "$day, $datee $month $year";
     } else {
-        $text       .= "$datee $month $year";
+        $text       .= "$date $month $year";
     }
-    
-    return $text; 
+
+    return $text;
 }
 
 function add_zero_front($value, $threshold = null)

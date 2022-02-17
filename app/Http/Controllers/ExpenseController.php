@@ -21,25 +21,25 @@ class ExpenseController extends Controller
     {
      $expense = Expense::orderBy('id_expense', 'desc')->get();
 
-     return datatables()
-        ->of($expense)
-        ->addIndexColumn()
-        ->addColumn('created_at', function ($expense) {
-            return palestinian_date($expense->created_at, false);
-        })
-//        ->addColumn('nominal', function ($expense) {
-//            return format_uang($expense->nominal);
-//        })
-        ->addColumn('Added', function ($expense) {
-            return '
+        return datatables()
+            ->of($expense)
+            ->addIndexColumn()
+            ->addColumn('created_at', function ($expense) {
+                return palestinian_date($expense->created_at, false);
+            })
+            ->addColumn('nominal', function ($expense) {
+                return format_uang($expense->nominal);
+            })
+            ->addColumn('Added', function ($expense) {
+                return '
                 <div class="btn-group">
                     <button type="button" onclick="editForm(`'. route('expenses.update', $expense->id_expense) .'`)" class="btn btn-xs btn-info btn-flat"><i class="fa fa-pencil"></i></button>
                     <button type="button" onclick="deleteData(`'. route('expenses.destroy', $expense->id_expense) .'`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
                 </div>
                 ';
-        })
-        ->rawColumns(['Added'])
-        ->make(true);
+            })
+            ->rawColumns(['Added'])
+            ->make(true);
 }
 
     /**
@@ -71,9 +71,11 @@ class ExpenseController extends Controller
      * @param  \App\Models\Expense  $expense
      * @return \Illuminate\Http\Response
      */
-    public function show(Expense $expense)
+    public function show($id)
     {
-        //
+        $expense = Expense::find($id);
+
+        return response()->json($expense);
     }
 
     /**
@@ -94,9 +96,11 @@ class ExpenseController extends Controller
      * @param  \App\Models\Expense  $expense
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Expense $expense)
+    public function update(Request $request, $id)
     {
-        //
+        $expense = Expense::find($id)->update($request->all());
+
+        return response()->json('Data Updated Succfully', 200);
     }
 
     /**
@@ -105,8 +109,10 @@ class ExpenseController extends Controller
      * @param  \App\Models\Expense  $expense
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Expense $expense)
+    public function destroy($id)
     {
-        //
+        $expense = Expense::find($id)->delete();
+
+        return response(null, 204);
     }
 }
