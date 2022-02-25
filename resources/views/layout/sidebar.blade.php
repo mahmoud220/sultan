@@ -50,7 +50,7 @@
           </a>
         </li>
         <li>
-          <a href="#">
+          <a href="{{route('purchase.index')}}">
             <i class="fa fa-download"></i> <span>Purchases</span>
           </a>
         </li>

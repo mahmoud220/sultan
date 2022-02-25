@@ -45,9 +45,9 @@ function palestinian_date($tgl, $show_date = true)
     $text    = '';
 
     if ($show_date) {
-        $today_format = date('w', mktime(0,0,0, substr($tgl, 5, 2), $datee, $year));
+        $today_format = date('w', mktime(0,0,0, substr($tgl, 5, 2), $date, $year));
         $day        = $date_name[$today_format];
-        $text       .= "$day, $datee $month $year";
+        $text       .= "$day, $date $month $year";
     } else {
         $text       .= "$date $month $year";
     }

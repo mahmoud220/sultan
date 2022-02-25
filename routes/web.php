@@ -6,6 +6,8 @@ use App\Http\Controllers\{
     MemberController,
     SupplierController,
     ExpenseController,
+    PurchaseController,
+    PurchaseDetailController,
 };
 use Illuminate\Support\Facades\Route;
 
@@ -53,4 +55,16 @@ Route::group(['middleware' => 'auth'], function(){
     //Expenses
     Route::get('/expense/data', [ExpenseController::class, 'data'])->name('expense.data');
     Route::resource('/expenses', ExpenseController::class);
+
+    //Purchases
+    Route::get('/purchase/data', [PurchaseController::class, 'data'])->name('purchase.data');
+    Route::get('/purchase/{id}/create', [PurchaseController::class, 'create'])->name('purchase.create');
+    Route::resource('/purchase', PurchaseController::class)
+        ->except('create');
+
+    //Purchases Detail
+    Route::get('/purchase_detail/{id}/data', [PurchaseDetailController::class, 'data'])->name('purchase_detail.data');
+    Route::get('/purchase_detail/loadform/{discount}/{total}', [PurchaseDetailController::class, 'loadForm'])->name('purchase_detail.load_form');
+    Route::resource('/purchase_detail', PurchaseDetailController::class)
+        ->except('create', 'show', 'edit');
 });
